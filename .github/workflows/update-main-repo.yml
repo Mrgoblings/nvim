@@ -1,29 +1,30 @@
-name: Update Main Repository
+name: Update Submodule
 
 on:
   push:
     branches:
-      - main  # Change this to your main branch if different
+      - main  # Adjust this to your branch
 
 jobs:
-  update-main:
+  update_submodule:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write  # Grant write access to the repository contents
+
     steps:
-      - name: Checkout nvim repository
+      - name: Checkout repository
         uses: actions/checkout@v2
-        
-      - name: Checkout main repository
-        uses: actions/checkout@v2
-        with:
-          repository: MrGoblings/MrGoblings  # Your main repo
-          token: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided token
-          path: main_repo  # Path where the main repo will be checked out
+
+      - name: Set up Git user
+        run: |
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"  # Use the secret for email
+          git config --global user.name MrGoblings 
 
       - name: Update submodule
         run: |
           git -C main_repo submodule update --remote --merge  # Update submodules
-        
+
       - name: Commit and push changes
         run: |
           git -C main_repo add .
