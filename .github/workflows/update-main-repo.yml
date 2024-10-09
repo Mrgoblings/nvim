@@ -1,0 +1,31 @@
+name: Update Main Repository
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch if different
+
+jobs:
+  update-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout nvim repository
+        uses: actions/checkout@v2
+        
+      - name: Checkout main repository
+        uses: actions/checkout@v2
+        with:
+          repository: MrGoblings/MrGoblings  # Your main repo
+          token: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided token
+          path: main_repo  # Path where the main repo will be checked out
+
+      - name: Update submodule
+        run: |
+          git -C main_repo submodule update --remote --merge  # Update submodules
+        
+      - name: Commit and push changes
+        run: |
+          git -C main_repo add .
+          git -C main_repo commit -m "Automated: Update nvim submodule to latest" || echo "No changes to commit"
+          git -C main_repo push
