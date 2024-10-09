@@ -3,33 +3,39 @@ name: Update Submodule
 on:
   push:
     branches:
-      - main
+      - main  # Adjust this to your branch
 
 jobs:
   update_submodule:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  
+      contents: write  # Grant write access to the repository contents
 
     steps:
       - name: Checkout main repository
         uses: actions/checkout@v2
         with:
-          repository: MrGoblings/MrGoblings
-          token: ${{ secrets.GITHUB_TOKEN }} 
-          path: main_repo 
+          repository: MrGoblings/MrGoblings  # Your main repo
+          token: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided token
+          path: main_repo  # Path where the main repo will be checked out
 
       - name: Set up Git user
         run: |
-          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-          git config --global user.name MrGoblings
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"  # Use the secret for email
+          git config --global user.name "${{ secrets.GIT_USER_NAME }}"  # Use the secret for name
 
       - name: Update submodule
         run: |
           git -C main_repo submodule update --remote --merge  # Update submodules
 
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git -C main_repo diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
+
       - name: Commit and push changes
+        if: env.changes_detected == 'true'
         run: |
           git -C main_repo add .
           git -C main_repo commit -m "Automated: Update nvim submodule to latest" || echo "No changes to commit"
