@@ -3,23 +3,27 @@ name: Update Submodule
 on:
   push:
     branches:
-      - main  # Adjust this to your branch
+      - main
 
 jobs:
   update_submodule:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Grant write access to the repository contents
+      contents: write  
 
     steps:
-      - name: Checkout repository
+      - name: Checkout main repository
         uses: actions/checkout@v2
+        with:
+          repository: MrGoblings/MrGoblings
+          token: ${{ secrets.GITHUB_TOKEN }} 
+          path: main_repo 
 
       - name: Set up Git user
         run: |
-          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"  # Use the secret for email
-          git config --global user.name MrGoblings 
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global user.name MrGoblings
 
       - name: Update submodule
         run: |
