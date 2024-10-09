@@ -27,12 +27,12 @@ To get started with this configuration, follow these steps:
 3. **Open Neovim and install plugins:**
 
 ```bash
-   nvim
+nvim
 ```
 
    Inside Neovim, run:
 ```bash
-    :Lazy sync
+:Lazy sync
 ```
 
 ## Configuration Files
